@@ -30,19 +30,19 @@ class BasePage:
         return wait.until(EC.presence_of_element_located(locator))
 
     def tap(self, locator: tuple, timeout: int = 5):
-        self.ensure_app_in_foreground()
         for attempt in range(3):
             try:
                 element = self.find_element(locator, timeout)
                 element.click()
                 return
-            except StaleElementReferenceException:
+            except (StaleElementReferenceException, TimeoutException):
                 if attempt == 2:
                     raise
+                self.ensure_app_in_foreground()
                 time.sleep(0.2)
 
-    def handle_permission_alert(self, timeout: int = 2) -> bool:
-        """Menangani alert/dialog izin sistem Android."""
+    def handle_permission_alert(self, timeout: int = 0.3) -> bool:
+        """Menangani alert/dialog izin sistem Android secara cepat."""
         locators = [
             (AppiumBy.ID, "com.android.permissioncontroller:id/permission_allow_foreground_only_button"),
             (AppiumBy.ID, "com.android.permissioncontroller:id/permission_allow_button"),
@@ -52,24 +52,27 @@ class BasePage:
         for loc in locators:
             if self.is_element_displayed(loc, timeout=timeout):
                 try:
-                    self.tap(loc, timeout=1)
+                    element = self.find_element(loc, timeout=1)
+                    element.click()
                     return True
                 except Exception:
                     pass
         return False
 
     def _navigate_to_tab(self, tab_locator: tuple, tab_name: str = ""):
-        """Navigasi ke tab bottom nav secara cepat."""
-        self.ensure_app_in_foreground()
-        for _ in range(3):
-            if self.is_element_displayed(tab_locator, timeout=1.0):
-                self.tap(tab_locator, timeout=3)
-                return
+        """Navigasi ke tab bottom nav secara sangat cepat."""
+        if self.is_element_displayed(tab_locator, timeout=0.8):
+            self.tap(tab_locator, timeout=2)
+            return
+        for _ in range(2):
             try:
                 self.driver.back()
             except Exception:
                 pass
-            self.ensure_app_in_foreground()
+            if self.is_element_displayed(tab_locator, timeout=0.8):
+                self.tap(tab_locator, timeout=2)
+                return
+        self.ensure_app_in_foreground()
         self.tap(tab_locator, timeout=3)
 
     def go_to_beranda(self):
@@ -85,13 +88,13 @@ class BasePage:
         self._navigate_to_tab(self.TAB_PROFIL, "Profil")
 
     def type_text(self, locator: tuple, text: str, timeout: int = 5):
-        self.ensure_app_in_foreground()
-        element = self.find_element(locator, timeout)
         try:
+            element = self.find_element(locator, timeout)
             element.click()
             element.clear()
             element.send_keys(text)
-        except StaleElementReferenceException:
+        except (StaleElementReferenceException, TimeoutException):
+            self.ensure_app_in_foreground()
             element = self.find_element(locator, timeout)
             element.clear()
             element.send_keys(text)
@@ -129,6 +132,21 @@ class BasePage:
     def scroll_and_tap(self, locator: tuple, max_swipes: int = 10):
         self.scroll_to_element(locator, max_swipes)
         self.tap(locator)
+
+    def swipe_up(self, duration: int = 350):
+        """Scroll ke atas (ke arah top layar)."""
+        try:
+            size = self.driver.get_window_size()
+            sx = size['width'] * 0.5
+            self.driver.swipe(sx, size['height'] * 0.35, sx, size['height'] * 0.75, duration)
+        except Exception:
+            pass
+
+    def scroll_to_top(self, max_swipes: int = 5):
+        """Scroll kembali ke bagian paling atas layar."""
+        for _ in range(max_swipes):
+            self.swipe_up()
+            time.sleep(0.2)
 
     def press_back(self):
         try:

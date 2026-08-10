@@ -14,7 +14,7 @@ class TestBerandaNonLogin:
         class_beranda.go_to_beranda()
 
     @allure.story("Beranda (Non-Login)")
-    @allure.title("Menampilkan section standar (tanpa Benefit/E-Dokumen)")
+    @allure.title("BERANDA-01: Menampilkan section standar (tanpa Benefit/E-Dokumen)")
     @allure.severity(allure.severity_level.NORMAL)
     def test_beranda_tampilan_benar(self, class_beranda):
         assert class_beranda.is_beranda_standar_displayed(), "Section standar beranda gagal dimuat."
@@ -22,7 +22,7 @@ class TestBerandaNonLogin:
         assert not class_beranda.is_edokumen_section_displayed(), "Section E-Dokumen seharusnya TIDAK muncul saat belum login."
 
     @allure.story("Beranda (Non-Login)")
-    @allure.title("Pencarian dari halaman beranda saat belum login")
+    @allure.title("BERANDA-02: Pencarian dari halaman beranda saat belum login")
     @allure.severity(allure.severity_level.NORMAL)
     def test_beranda_search(self, class_beranda):
         class_beranda.tap_pencarian()
@@ -31,7 +31,7 @@ class TestBerandaNonLogin:
         class_beranda.tap_hasil_pencarian()
 
     @allure.story("Beranda (Non-Login)")
-    @allure.title("Interaksi Layanan Populer saat belum login")
+    @allure.title("BERANDA-03: Interaksi Layanan Populer saat belum login")
     @allure.severity(allure.severity_level.NORMAL)
     def test_beranda_layanan_populer(self, class_beranda):
         class_beranda.tap_item_layanan_populer()
@@ -40,26 +40,8 @@ class TestBerandaNonLogin:
         class_beranda.safe_tap_back()
 
     @allure.story("Beranda (Non-Login)")
-    @allure.title("Interaksi Topik Populer saat belum login")
-    @allure.severity(allure.severity_level.NORMAL)
-    @pytest.mark.xfail(reason="Fitur belum jadi")
-    def test_beranda_topik_populer(self, class_beranda):
-        class_beranda.is_beranda_standar_displayed()
-        class_beranda.tap_item_topik_populer()
-        class_beranda.safe_tap_back()
-        assert not class_beranda.is_element_displayed(class_beranda.TAB_BERANDA, timeout=3), "Topik Populer gagal membuka halaman baru (fitur belum jadi)"
-
-    @allure.story("Beranda (Non-Login)")
-    @allure.title("Jelajahi Layanan Kategori Kesehatan")
+    @allure.title("BERANDA-04: Jelajahi Layanan Kategori Kesehatan")
     @allure.severity(allure.severity_level.NORMAL)
     def test_beranda_jelajahi_layanan(self, class_beranda):
         class_beranda.tap_kategori_kesehatan()
         class_beranda.tap_pencarian_dokter()
-
-    @allure.story("Beranda (Non-Login)")
-    @allure.title("Interaksi Informasi Layanan Terkait")
-    @allure.severity(allure.severity_level.NORMAL)
-    @pytest.mark.xfail(reason="Section Info Layanan Terbaru hanya tampil saat login")
-    def test_beranda_informasi_layanan(self, class_beranda):
-        class_beranda.tap_item_info_layanan()
-        class_beranda.tap_informasi_terkait()

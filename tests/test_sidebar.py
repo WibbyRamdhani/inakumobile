@@ -6,7 +6,7 @@ from page.base_page import BasePage
 class TestSidebar:
 
     @allure.story("Sidebar")
-    @allure.title("Beranda")
+    @allure.title("SIDEBAR-01: Beranda")
     @allure.severity(allure.severity_level.NORMAL)
     def test_beranda(self, driver):
         sidebar = SidebarComponent(driver)
@@ -14,7 +14,7 @@ class TestSidebar:
         sidebar.tap_beranda()
 
     @allure.story("Sidebar")
-    @allure.title("Layanan Publik")
+    @allure.title("SIDEBAR-02: Layanan Publik")
     @allure.severity(allure.severity_level.NORMAL)
     def test_layanan(self, driver):
         sidebar = SidebarComponent(driver)
@@ -22,7 +22,7 @@ class TestSidebar:
         sidebar.tap_layanan_publik()
 
     @allure.story("Sidebar")
-    @allure.title("Informasi Layanan")
+    @allure.title("SIDEBAR-03: Informasi Layanan")
     @allure.severity(allure.severity_level.NORMAL)
     def test_informasi(self, driver):
         sidebar = SidebarComponent(driver)
@@ -30,7 +30,7 @@ class TestSidebar:
         sidebar.tap_informasi_layanan()
 
     @allure.story("Sidebar")
-    @allure.title("Aduan dan Bantuan")
+    @allure.title("SIDEBAR-04: Aduan dan Bantuan")
     @allure.severity(allure.severity_level.NORMAL)
     @pytest.mark.xfail(reason="Belum implementasi")
     def test_aduan_bantuan(self, driver):

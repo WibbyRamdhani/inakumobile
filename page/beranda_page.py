@@ -43,11 +43,11 @@ class BerandaPage(BasePage):
     ITEM_LAYANAN_POPULER = (AppiumBy.XPATH, "(//*[contains(@content-desc, 'Pencarian Fasilitas Layanan Kesehatan') or contains(@content-desc, 'Fasilitas Layanan Kesehatan') or contains(@content-desc, 'Kesehatan') or starts-with(@content-desc, 'LAYANAN') or starts-with(@content-desc, 'Layanan')])[1]")
     TOMBOL_LIHAT_SEMUA_LAYANAN_POPULER = (AppiumBy.ACCESSIBILITY_ID, "Lihat semua") 
     DETAIL_LAYANAN_PAGE = (AppiumBy.ACCESSIBILITY_ID, "Detail Layanan") 
-    ITEM_TOPIK_POPULER = (AppiumBy.ACCESSIBILITY_ID, "Mudik Lebaran 2026") 
+    ITEM_TOPIK_POPULER = (AppiumBy.XPATH, "(//android.view.View[@content-desc='Topik Populer']/following-sibling::*[@clickable='true'] | //*[contains(@content-desc, 'Mudik') or contains(@content-desc, 'Lebaran')])[1]")
     KATEGORI_KESEHATAN = (AppiumBy.XPATH, "//*[contains(@content-desc, 'Kesehatan') and contains(@content-desc, 'Layanan')]")
     TOMBOL_LIHAT_SEMUA_JELAJAHI = (AppiumBy.ACCESSIBILITY_ID, "Lihat semua") 
     ITEM_PENCARIAN_DOKTER = (AppiumBy.XPATH, "(//*[contains(@content-desc, 'Dokter') or starts-with(@content-desc, 'Layanan\n') or contains(@content-desc, 'Layanan')])[1]")
-    ITEM_INFO_LAYANAN = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().descriptionContains("Pemerintah Indonesia dan UNICEF")') 
+    ITEM_INFO_LAYANAN = (AppiumBy.XPATH, "(//android.view.View[contains(@content-desc, 'Info Layanan')]/following-sibling::*[@clickable='true'] | //*[contains(@content-desc, 'UNICEF') or contains(@content-desc, 'Pemerintah')])[1]") 
     TOMBOL_LIHAT_SEMUA_INFO = (AppiumBy.ACCESSIBILITY_ID, "Lihat semua informasi") 
     DETAIL_INFO_LAYANAN = (AppiumBy.ACCESSIBILITY_ID, "Detail Informasi")
     ITEM_INFORMASI_TERKAIT = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().descriptionMatches("(?i).*informasi terkait.*")')
@@ -163,39 +163,32 @@ class BerandaPage(BasePage):
         return self.is_element_displayed(self.HALAMAN_PROFIL_EDOKUMEN, timeout=5)
 
     def tap_item_layanan_populer(self):
-        self.scroll_and_tap(self.ITEM_LAYANAN_POPULER)
+        self.scroll_and_tap(self.ITEM_LAYANAN_POPULER, max_swipes=3)
         
     def tap_lihat_semua_layanan_populer(self):
-        self.scroll_and_tap(self.TOMBOL_LIHAT_SEMUA_LAYANAN_POPULER)
+        self.scroll_and_tap(self.TOMBOL_LIHAT_SEMUA_LAYANAN_POPULER, max_swipes=3)
         
     def tap_item_topik_populer(self):
-        self.scroll_and_tap(self.ITEM_TOPIK_POPULER)
+        self.scroll_and_tap(self.ITEM_TOPIK_POPULER, max_swipes=3)
         
     def tap_kategori_kesehatan(self):
-        self.scroll_and_tap(self.KATEGORI_KESEHATAN)
+        self.scroll_and_tap(self.KATEGORI_KESEHATAN, max_swipes=3)
         
     def tap_lihat_semua_jelajahi_layanan(self):
-        self.scroll_to_element(self.SECTION_JELAJAHI_LAYANAN)
-        self.scroll_and_tap(self.TOMBOL_LIHAT_SEMUA_JELAJAHI, max_swipes=10)
+        self.scroll_to_element(self.SECTION_JELAJAHI_LAYANAN, max_swipes=3)
+        self.scroll_and_tap(self.TOMBOL_LIHAT_SEMUA_JELAJAHI, max_swipes=3)
         
     def tap_pencarian_dokter(self):
-        self.scroll_and_tap(self.ITEM_PENCARIAN_DOKTER)
+        self.scroll_and_tap(self.ITEM_PENCARIAN_DOKTER, max_swipes=3)
         
     def tap_item_info_layanan(self):
-        # Cari elemennya dulu
-        self.scroll_to_element(self.ITEM_INFO_LAYANAN)
-        # Tambah 1 swipe ekstra agar elemen naik ke tengah/atas layar
-        # Ini mencegah Appium secara tidak sengaja menekan Bottom Navigation Bar (Tab Layanan)
-        self.swipe_down()
-        import time
-        time.sleep(1)
-        self.tap(self.ITEM_INFO_LAYANAN)
+        self.scroll_and_tap(self.ITEM_INFO_LAYANAN, max_swipes=3)
         
     def tap_informasi_terkait(self):
-        self.scroll_and_tap(self.ITEM_INFORMASI_TERKAIT, max_swipes=15)
+        self.scroll_and_tap(self.ITEM_INFORMASI_TERKAIT, max_swipes=3)
         
     def tap_lihat_semua_info_layanan(self):
-        self.scroll_and_tap(self.TOMBOL_LIHAT_SEMUA_INFO)
+        self.scroll_and_tap(self.TOMBOL_LIHAT_SEMUA_INFO, max_swipes=3)
         
     def tap_back(self):
         self.driver.back()

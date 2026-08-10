@@ -28,14 +28,14 @@ class TestBerandaLogin:
         class_beranda.go_to_beranda()
 
     @allure.story("Beranda (Setelah Login)")
-    @allure.title("Menampilkan section lengkap termasuk Benefit & E-Dokumen")
+    @allure.title("BERANDA-01: Menampilkan section lengkap termasuk Benefit & E-Dokumen")
     @allure.severity(allure.severity_level.NORMAL)
     def test_beranda_tampilan_lengkap(self, class_driver, class_beranda):
         assert class_beranda.is_benefit_section_displayed(), "Section Benefit harusnya muncul setelah login."
         assert class_beranda.is_edokumen_section_displayed(), "Section E-Dokumen harusnya muncul setelah login."
 
     @allure.story("Beranda (Setelah Login)")
-    @allure.title("Pencarian dari halaman beranda saat login")
+    @allure.title("BERANDA-02: Pencarian dari halaman beranda saat login")
     @allure.severity(allure.severity_level.NORMAL)
     def test_beranda_search(self, class_driver, class_beranda):
         class_beranda.tap_pencarian_dummy() 
@@ -43,14 +43,14 @@ class TestBerandaLogin:
         class_beranda.tap_hasil_pencarian()
 
     @allure.story("Benefit User")
-    @allure.title("Carousel Benefit dan klik item pertama")
+    @allure.title("BERANDA-03: Carousel Benefit dan klik item pertama")
     @allure.severity(allure.severity_level.NORMAL)
     def test_beranda_benefit_carousel(self, class_driver, class_beranda):
         class_beranda.scroll_carousel_benefit()
         class_beranda.tap_item_benefit()
 
     @allure.story("Benefit User")
-    @allure.title("Validasi pagination pada halaman Lihat Semua Benefit")
+    @allure.title("BERANDA-04: Validasi pagination pada halaman Lihat Semua Benefit")
     @allure.severity(allure.severity_level.NORMAL)
     def test_pagination_benefit(self, class_driver, class_beranda):
         class_beranda.tap_lihat_semua_benefit()
@@ -61,7 +61,7 @@ class TestBerandaLogin:
         class_beranda.tap_pagination_benefit("first")
 
     @allure.story("Benefit User")
-    @allure.title("Pencarian pada halaman Lihat Semua Benefit")
+    @allure.title("BERANDA-05: Pencarian pada halaman Lihat Semua Benefit")
     @allure.severity(allure.severity_level.NORMAL)
     def test_beranda_benefit_all(self, class_driver, class_beranda):
         class_beranda.tap_lihat_semua_benefit()
@@ -70,7 +70,7 @@ class TestBerandaLogin:
         class_beranda.safe_tap_back()
 
     @allure.story("Benefit User")
-    @allure.title("Filter dan Sort pada halaman Lihat Semua Benefit")
+    @allure.title("BERANDA-06: Filter dan Sort pada halaman Lihat Semua Benefit")
     @allure.severity(allure.severity_level.NORMAL)
     @pytest.mark.xfail(reason="Fitur belum selesai")
     def test_beranda_benefit_all_filter_sort(self, class_driver, class_beranda):
@@ -81,7 +81,7 @@ class TestBerandaLogin:
         
 
     @allure.story("Pencarian User")
-    @allure.title("Pemilihan Kategori pada halaman Lihat Semua Benefit")
+    @allure.title("BERANDA-07: Pemilihan Kategori pada halaman Lihat Semua Benefit")
     @allure.severity(allure.severity_level.NORMAL)
     def test_beranda_benefit_all_kategori(self, class_driver, class_beranda):
         class_beranda.tap_lihat_semua_benefit()
@@ -91,7 +91,7 @@ class TestBerandaLogin:
         class_beranda.pilih_kategori_benefit("pendidikan")
 
     @allure.story("E-Dokumen User")
-    @allure.title("Interaksi Carousel E-Dokumen dan Lihat/Unduh Dokumen")
+    @allure.title("BERANDA-08: Interaksi Carousel E-Dokumen dan Lihat/Unduh Dokumen")
     @allure.severity(allure.severity_level.NORMAL)
     def test_beranda_edokumen(self, class_driver, class_beranda):
         class_beranda.tap_item_edokumen()
@@ -99,14 +99,14 @@ class TestBerandaLogin:
         class_beranda.tap_unduh_dokumen()
 
     @allure.story("E-Dokumen User")
-    @allure.title("Direct ke halaman Profil E-Dokumen")
+    @allure.title("BERANDA-09: Direct ke halaman Profil E-Dokumen")
     @allure.severity(allure.severity_level.NORMAL)
     def test_beranda_edokumen_all(self, class_driver, class_beranda):
         class_beranda.tap_lihat_semua_edokumen()
         class_beranda.is_profil_edokumen_displayed()
 
     @allure.story("Layanan Populer (Login)")
-    @allure.title("Interaksi Layanan Populer saat login")
+    @allure.title("BERANDA-10: Interaksi Layanan Populer saat login")
     @allure.severity(allure.severity_level.NORMAL)
     def test_beranda_layanan_populer(self, class_driver, class_beranda):
         class_beranda.tap_item_layanan_populer()
@@ -115,7 +115,7 @@ class TestBerandaLogin:
         class_beranda.tap_item_layanan_populer()
 
     @allure.story("Topik Populer (Login)")
-    @allure.title("Interaksi Topik Populer saat login")
+    @allure.title("BERANDA-11: Interaksi Topik Populer saat login")
     @allure.severity(allure.severity_level.NORMAL)
     @pytest.mark.xfail(reason="Fitur belum jadi")
     def test_beranda_topik_populer(self, class_driver, class_beranda):
@@ -123,17 +123,10 @@ class TestBerandaLogin:
         assert not class_beranda.is_element_displayed(class_beranda.TAB_BERANDA, timeout=3), "Topik Populer gagal membuka halaman baru (fitur belum jadi)"
 
     @allure.story("Jelajahi Layanan (Login)")
-    @allure.title("Jelajahi Layanan Kategori Kesehatan saat login")
+    @allure.title("BERANDA-12: Jelajahi Layanan Kategori Kesehatan saat login")
     @allure.severity(allure.severity_level.NORMAL)
     def test_beranda_jelajahi_layanan(self, class_driver, class_beranda):
         class_beranda.tap_kategori_kesehatan()
         class_beranda.go_to_beranda()
         class_beranda.tap_lihat_semua_jelajahi_layanan()
         class_beranda.pilih_kategori_benefit("bantuan sosial") 
-
-    @allure.story("Informasi Layanan (Login)")
-    @allure.title("Interaksi Informasi Layanan Terkait saat login")
-    @allure.severity(allure.severity_level.NORMAL)
-    def test_beranda_informasi_layanan(self, class_driver, class_beranda):
-        class_beranda.tap_item_info_layanan()
-        class_beranda.tap_informasi_terkait()

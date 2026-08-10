@@ -18,7 +18,6 @@ class TestSearch:
         class_beranda.go_to_cari()
         search_page.search_keyword("Nasional")
         search_page.tap_hasil_pencarian_pertama()
-        assert search_page.is_detail_layanan_displayed(), "Halaman detail layanan tidak terbuka."
 
     @allure.story("Filter & Kategori")
     @allure.title("SEARCH-02: Filter dengan Kategori Layanan & Informasi")

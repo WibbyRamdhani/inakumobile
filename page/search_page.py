@@ -1,31 +1,65 @@
 from appium.webdriver.common.appiumby import AppiumBy
 from page.base_page import BasePage
+import time
 
 class SearchPage(BasePage):
-    # Locators — verified against DOM dumps
+    """
+    Page Object untuk halaman Cari (Search).
+    Diakses via bottom tab "Cari".
+    
+    UI Reference: ui_dumps/cari_actual.xml
+    """
+
+    # ─── Search Field ───
     SEARCH_FIELD = (AppiumBy.CLASS_NAME, "android.widget.EditText")
-    # Filter & Sort buttons — confirmed as android.widget.Button with content-desc
+    
+    # ─── Filter & Sort ───
     TOMBOL_FILTER = (AppiumBy.ACCESSIBILITY_ID, "Filter")
-    # Sort button alternates between 'Terbaru' (default) and 'A-Z'
-    TOMBOL_SORT_AZ = (AppiumBy.XPATH, "//*[@content-desc='Terbaru' or @content-desc='A-Z']")
-    # Category chips — confirmed format from DOM: "Layanan\n0", "Informasi\n2"
+    TOMBOL_SORT = (AppiumBy.XPATH, 
+        "//android.widget.Button[contains(@content-desc, 'Terbaru') or "
+        "contains(@content-desc, 'A-Z')]")
+    
+    # ─── Category chips (format: "Semua\n2", "Layanan\n0", "Informasi\n2") ───
+    CHIP_SEMUA = (AppiumBy.XPATH, "//*[starts-with(@content-desc, 'Semua')]")
     CHIP_LAYANAN = (AppiumBy.XPATH, "//*[starts-with(@content-desc, 'Layanan\n')]")
     CHIP_INFORMASI = (AppiumBy.XPATH, "//*[starts-with(@content-desc, 'Informasi\n')]")
-    # Clear button inside EditText
-    CLEAR_SEARCH_BUTTON = (AppiumBy.XPATH, "//android.widget.EditText/android.widget.Button[1]")
-    # Empty state — "Tidak ada" / "tidak ditemukan" / "Belum ada"
+    
+    # ─── Search results ───
+    # Hasil pencarian: card clickable besar (android.view.View dengan content-desc panjang)
+    # Chip kategori punya format "Semua\n2", "Layanan\n0", "Informasi\n2" (starts-with)
+    # Kartu hasil punya format "Informasi Layanan\n..." (panjang, tidak starts-with chip pattern)
+    HASIL_PENCARIAN_PERTAMA = (AppiumBy.XPATH, 
+        "(//android.view.View[@clickable='true' and "
+        "string-length(@content-desc) > 20 and "
+        "not(starts-with(@content-desc, 'Tab')) and "
+        "not(starts-with(@content-desc, 'Beranda')) and "
+        "not(starts-with(@content-desc, 'Cari')) and "
+        "not(starts-with(@content-desc, 'Layanan')) and "
+        "not(starts-with(@content-desc, 'Informasi')) and "
+        "not(starts-with(@content-desc, 'Semua')) and "
+        "not(starts-with(@content-desc, 'Pilih')) and "
+        "not(starts-with(@content-desc, 'Filter')) and "
+        "not(starts-with(@content-desc, 'Terbaru')) and "
+        "not(starts-with(@content-desc, 'A-Z'))])[1]")
+    
+    # ─── Clear search ───
+    CLEAR_SEARCH_BUTTON = (AppiumBy.XPATH, 
+        "//android.widget.EditText/android.widget.Button[1]")
+    
+    # ─── Empty state ───
     EMPTY_STATE_INDICATOR = (AppiumBy.XPATH,
         "//*[contains(@content-desc, 'tidak ditemukan') or "
         "contains(@content-desc, 'Tidak ada') or "
         "contains(@content-desc, 'Tidak ditemukan') or "
         "contains(@content-desc, 'Belum ada') or "
         "contains(@content-desc, 'tidak cocok') or "
-        "contains(@content-desc, 'hasil')]")
-    # Detail page indicators
-    DETAIL_LAYANAN_INDICATOR = (AppiumBy.XPATH,
-        "//*[contains(@content-desc, 'Detail') or contains(@content-desc, 'Bagikan')]")
-    # "Lihat detail" button on search result cards
-    HASIL_PENCARIAN_PERTAMA = (AppiumBy.XPATH, "(//*[@content-desc='Lihat detail'])[1]")
+        "contains(@content-desc, 'Coba gunakan kata kunci')]")
+    
+    # ─── Detail page indicators ───
+    DETAIL_INDICATOR = (AppiumBy.XPATH,
+        "//*[contains(@content-desc, 'Detail') or "
+        "contains(@content-desc, 'Bagikan') or "
+        "contains(@content-desc, 'Diterbitkan')]")
 
     def __init__(self, driver):
         super().__init__(driver)
@@ -33,19 +67,28 @@ class SearchPage(BasePage):
     def search_keyword(self, keyword: str):
         self.type_text(self.SEARCH_FIELD, keyword)
         try:
-            self.driver.execute_script('mobile: performEditorAction', {'action': 'search'})
+            self.driver.execute_script(
+                'mobile: performEditorAction', {'action': 'search'})
         except Exception:
             pass
         self.driver.press_keycode(66)
+        time.sleep(2)  # Tunggu hasil search muncul
 
     def tap_filter(self):
         self.tap(self.TOMBOL_FILTER)
 
+    def tap_sort(self):
+        """Tap sort button (toggle antara Terbaru dan A-Z)."""
+        self.tap(self.TOMBOL_SORT)
+
+    # Alias untuk backward compatibility
     def tap_sort_az(self):
-        self.tap(self.TOMBOL_SORT_AZ)
+        self.tap_sort()
 
     def tap_hasil_pencarian_pertama(self):
-        self.scroll_and_tap(self.HASIL_PENCARIAN_PERTAMA)
+        """Tap hasil pencarian pertama setelah tunggu hasil muncul."""
+        time.sleep(3)  # Tunggu hasil search render sempurna
+        self.scroll_and_tap(self.HASIL_PENCARIAN_PERTAMA, max_swipes=3)
 
     def tap_kategori_layanan(self):
         self.tap(self.CHIP_LAYANAN)
@@ -64,7 +107,7 @@ class SearchPage(BasePage):
         return self.is_element_displayed(self.EMPTY_STATE_INDICATOR, timeout=timeout)
 
     def is_detail_layanan_displayed(self, timeout: int = 5) -> bool:
-        return self.is_element_displayed(self.DETAIL_LAYANAN_INDICATOR, timeout=timeout)
+        return self.is_element_displayed(self.DETAIL_INDICATOR, timeout=timeout)
 
     def get_search_field_text(self) -> str:
         element = self.find_element(self.SEARCH_FIELD)

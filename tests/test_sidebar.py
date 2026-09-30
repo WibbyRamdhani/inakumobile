@@ -32,7 +32,6 @@ class TestSidebar:
     @allure.story("Sidebar")
     @allure.title("SIDEBAR-04: Aduan dan Bantuan")
     @allure.severity(allure.severity_level.NORMAL)
-    @pytest.mark.xfail(reason="Belum implementasi")
     def test_aduan_bantuan(self, driver):
         sidebar = SidebarComponent(driver)
         sidebar.tap_burger()

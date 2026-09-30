@@ -5,10 +5,13 @@ from selenium.common.exceptions import TimeoutException, NoSuchElementException,
 import time
 
 class BasePage:
-    APP_PACKAGE = "com.example.portal_layanan_publik_mobile"
+    APP_PACKAGES = [
+        "com.kominfo.portallayananpublik",
+        "com.example.portal_layanan_publik_mobile",
+    ]
 
     TAB_BERANDA = (AppiumBy.ACCESSIBILITY_ID, "Beranda")
-    TAB_CARI = (AppiumBy.ACCESSIBILITY_ID, "Cari")
+    TAB_CARI = (AppiumBy.XPATH, "//android.view.View[@content-desc='Cari']")
     TAB_LAYANAN = (AppiumBy.ACCESSIBILITY_ID, "Layanan")
     TAB_PROFIL = (AppiumBy.ACCESSIBILITY_ID, "Profil")
 
@@ -20,8 +23,9 @@ class BasePage:
         """Memastikan aplikasi utama aktif di foreground (bila terlempar ke PlayStore/Browser)."""
         try:
             current_app = self.driver.current_package
-            if current_app and current_app != self.APP_PACKAGE:
-                self.driver.activate_app(self.APP_PACKAGE)
+            if current_app and current_app not in self.APP_PACKAGES:
+                app_pkg = self.driver.capabilities.get("appPackage", self.APP_PACKAGES[0])
+                self.driver.activate_app(app_pkg)
         except Exception:
             pass
 
@@ -60,20 +64,25 @@ class BasePage:
         return False
 
     def _navigate_to_tab(self, tab_locator: tuple, tab_name: str = ""):
-        """Navigasi ke tab bottom nav secara sangat cepat."""
-        if self.is_element_displayed(tab_locator, timeout=0.8):
-            self.tap(tab_locator, timeout=2)
+        """Navigasi ke tab bottom nav — robust dengan retry dan back."""
+        if self.is_element_displayed(tab_locator, timeout=1.5):
+            self.tap(tab_locator, timeout=3)
+            time.sleep(1)
             return
-        for _ in range(2):
+        for _ in range(3):
             try:
                 self.driver.back()
             except Exception:
                 pass
-            if self.is_element_displayed(tab_locator, timeout=0.8):
-                self.tap(tab_locator, timeout=2)
+            time.sleep(0.5)
+            if self.is_element_displayed(tab_locator, timeout=1):
+                self.tap(tab_locator, timeout=3)
+                time.sleep(1)
                 return
         self.ensure_app_in_foreground()
-        self.tap(tab_locator, timeout=3)
+        time.sleep(1)
+        self.tap(tab_locator, timeout=5)
+        time.sleep(1)
 
     def go_to_beranda(self):
         self._navigate_to_tab(self.TAB_BERANDA, "Beranda")

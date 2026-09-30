@@ -162,7 +162,7 @@ def class_profil(class_driver):
 def driver(request):
     """Appium driver baru per test function (session fresh tiap test)."""
     import time
-    # Kill stale UiAutomator2 processes
+    # Kill stale UiAutomator2 processes (both server and instrumentation)
     try:
         udid = get_connected_device()
         subprocess.run(
@@ -170,9 +170,15 @@ def driver(request):
              "io.appium.uiautomator2.server"],
             capture_output=True, timeout=5
         )
-        time.sleep(1)
+        subprocess.run(
+            ["adb", "-s", udid, "shell", "am", "force-stop",
+             "io.appium.uiautomator2.server.test"],
+            capture_output=True, timeout=5
+        )
+        time.sleep(2)
     except Exception:
         pass
+
 
     caps = get_capabilities(use_existing_install=True)
     options = UiAutomator2Options().load_capabilities(caps)
